@@ -6,7 +6,7 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 //////////////////////////////////////////////////////////
-List compareKgroups(int ngroup, int nsamples, int burn, IntegerMatrix y, IntegerMatrix missing, int demleader, int repleader, IntegerVector group, int thin)
+List compareKgroups(int ngroup, int nsamples, int burn, LogicalMatrix y, LogicalMatrix missing, int demleader, int repleader, IntegerVector group, int thin)
 {
     
     

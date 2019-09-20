@@ -33,7 +33,7 @@ void sample_mu(int II,int JJ, int KK,Rcpp::NumericMatrix &z, Rcpp::NumericVector
 
 double sample_cond_norm (double eta, double sigma);
 
-void sample_z(int II,int JJ,int KK, Rcpp::IntegerMatrix &y, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma);
+void sample_z(int II,int JJ,int KK, Rcpp::LogicalMatrix &y, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma);
 
 void sample_pi(int JJ, double *p, Rcpp::NumericVector &parm);
 
@@ -48,7 +48,7 @@ void sample_rho(int II,int KK, double *rho, double tau2, Rcpp::NumericMatrix &be
 
 void sample_tau2(int II,int KK, double *tau2, Rcpp::NumericMatrix &beta, double rho, Rcpp::IntegerMatrix &omega);
 
-void sample_missings(int II,int JJ,int KK, Rcpp::IntegerMatrix &y, Rcpp::IntegerMatrix &missing, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma);
+void sample_missings(int II,int JJ,int KK, Rcpp::LogicalMatrix &y, Rcpp::LogicalMatrix &missing, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma);
 
 #endif
 

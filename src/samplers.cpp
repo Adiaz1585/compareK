@@ -513,7 +513,7 @@ double sample_cond_norm (double eta, double sigma)        //AR version
 }
 
 
-void sample_z(int II,int JJ,int KK, Rcpp::IntegerMatrix &y, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma){
+void sample_z(int II,int JJ,int KK, Rcpp::LogicalMatrix &y, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma){
     int i, j;
     double mean;
     for(i=0; i<II; i++){
@@ -747,7 +747,7 @@ void sample_tau2(int II,int KK, double *tau2, Rcpp::NumericMatrix &beta, double 
      //printf("a=%f, b=%f \n",a,b); */
 }
 
-void sample_missings(int II,int JJ,int KK, Rcpp::IntegerMatrix &y, Rcpp::IntegerMatrix &missing, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma){
+void sample_missings(int II,int JJ,int KK, Rcpp::LogicalMatrix &y, Rcpp::LogicalMatrix &missing, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma){
     int i, j;
     double x, p;
     
