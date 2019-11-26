@@ -16,7 +16,7 @@ sampling <- function(ngroup, y, missing, group, nsamples = 30000L, burn = 1000L,
     #Ord file manipulation will go here
     
 
-     .Call(`_pract3_compareKgroups`, ngroup, nsamples, burn, y, missing, demleader, repleader, group, thin)
+     .Call(`_compareKgroups`, ngroup, nsamples, burn, y, missing, demleader, repleader, group, thin)
    
 }
 
