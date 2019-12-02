@@ -4,29 +4,31 @@ using namespace Rcpp;
 
 //compareKgroups
 
-List compareKgroups(int ngroup, int nsamples, int burn, LogicalMatrix y, LogicalMatrix missing, int demleader, int repleader, IntegerVector group, int thin);
+List compareKgroups(int ngroup, LogicalMatrix y, LogicalMatrix missing, int demleader, int repleader, IntegerVector group, int nsamples, int burn, int thin, int printevery, double varalpprop);
 
-RcppExport SEXP _compareKgroups(SEXP ngroupSEXP, SEXP nsamplesSEXP, SEXP burnSEXP, SEXP ySEXP, SEXP missingSEXP, SEXP demleaderSEXP, SEXP repleaderSEXP, SEXP groupSEXP, SEXP thinSEXP)
+RcppExport SEXP _compareKgroups(SEXP ngroupSEXP, SEXP ySEXP, SEXP missingSEXP, SEXP demleaderSEXP, SEXP repleaderSEXP, SEXP groupSEXP, SEXP nsamplesSEXP, SEXP burnSEXP, SEXP thinSEXP, SEXP printeverySEXP, SEXP varalppropSEXP)
 {
     BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope Rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type ngroup(ngroupSEXP);
-    Rcpp::traits::input_parameter< int >::type nsamples(nsamplesSEXP);
-    Rcpp::traits::input_parameter< int >::type burn(burnSEXP);
     Rcpp::traits::input_parameter< LogicalMatrix >::type y(ySEXP);
     Rcpp::traits::input_parameter< LogicalMatrix >::type missing(missingSEXP);
     Rcpp::traits::input_parameter< int >::type demleader(demleaderSEXP);
     Rcpp::traits::input_parameter< int >::type repleader(repleaderSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< int >::type nsamples(nsamplesSEXP);
+    Rcpp::traits::input_parameter< int >::type burn(burnSEXP);
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    rcpp_result_gen = Rcpp::wrap(compareKgroups(ngroup, nsamples, burn, y, missing, demleader, repleader, group, thin));
+    Rcpp::traits::input_parameter< int >::type printevery(printeverySEXP);
+    Rcpp::traits::input_parameter< double >::type varalpprop(varalppropSEXP);
+    rcpp_result_gen = Rcpp::wrap(compareKgroups(ngroup, y, missing, demleader, repleader, group, nsamples, burn, thin, printevery, varalpprop));
     return rcpp_result_gen;
     END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_compareKgroups", (DL_FUNC) _compareKgroups, 9},
+    {"_compareKgroups", (DL_FUNC) _compareKgroups, 11},
     {NULL, NULL, 0}
 };
 

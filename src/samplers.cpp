@@ -316,31 +316,29 @@ void sample_omega(int II, int JJ, Rcpp::IntegerMatrix &omega, double alp, Rcpp::
 }
 
 double logalp_dist(double sum, int KK, int II, double alp){
-    double dist;
-    //dist = newa * log(newb) - lgamma(newa) + (newa-1.0)*logalp - newb*exp(logalp) + logalp; //log gamma distribution
-    double p;
-    p = 2.0/((alp+2.0)*(alp+1.0));
-    //dist = II*lgamma(alp) - II*lgamma(alp+KK) + sum*log(alp) - alp - log(pbinom(KK-2,II,p,0,0));
-    dist = II*lgamma(alp) - II*lgamma(alp+KK) + sum*log(alp) - alp - log(R::pbinom(1,II,p,0,0));
+    int k;
+    double theta, dist, temp;
+
+    theta = exp(lgamma(KK) + lgamma(alp+1.0) - lgamma(KK+alp));
+    dist =  II*lgamma(alp) - II*lgamma(alp+KK) + sum*log(alp) - R::pbinom(1,II,theta,0,1);
+    dist += lgamma(alp+1.0) - lgamma(alp+KK);
+    temp = 0.0;
+    for(k=0; k<KK-1; k++){
+        temp += 1/(alp+k+1);
+    }
+    dist += log(temp);
     return dist;
 }
 
-void sample_alp(int II, int KK, Rcpp::NumericVector &latent, Rcpp::IntegerMatrix &omega, double *alp){
-    double a = 1.0;    //prior parameters G(a,b)
-    double b = 1.0;
-    double newa, newb;
-    
+void sample_alp(int II, int KK, Rcpp::IntegerMatrix &omega, double *alp, double varalpprop){
     double suma = 0.0;
-    double sumb = 0.0;
-    
-    double tempalp;
-    double star,praccept,uni;
+    double tempalp,star,praccept,uni;
     
     IntegerVector w(KK);
     int i, k;
     int LL;
     
-    for(i=0; i<II; i++){
+    /*for(i=0; i<II; i++){
         for(k=0; k<KK; k++){
             w[k] = omega(i, k);
         }
@@ -352,45 +350,42 @@ void sample_alp(int II, int KK, Rcpp::NumericVector &latent, Rcpp::IntegerMatrix
         //printf("LL %i suma %f sumb %f latenti %f log %f \n",LL,suma,sumb, 1.0-latent[i], log(1.0-latent[i]));
     }
     
-    newa = a + suma + 1.0;
-    newb = b - sumb;
+    newa = aalp + suma + 1.0;
+    newb = balp - sumb;
     //printf("a %f suma %f newa %f, b%f sumb %f newb %f \n",a,suma,newa,b,sumb,newb);
-    //*alp = rgamma(newa,1.0/newb);
-    tempalp = *alp;
+    // *alp = rgamma(newa,1.0/newb);
+     */
     //logalp = log(*alp);
+    for(i=0; i<II; i++){
+        for(k=0; k<KK; k++){
+            w[k] = omega(i, k);
+        }
+        LL = maximum_vector(KK,w)+1;  //number of groups - C starts at 0 so add 1
+        suma += LL;
+    }
     
-    star = R::rlnorm(tempalp,1.0);
-    praccept = exp(logalp_dist(suma,KK,II,star) - logalp_dist(suma,KK,II,tempalp) + log(star) - log(tempalp));
+    tempalp = *alp;
+    star = R::rlnorm(log(tempalp), varalpprop);
+    praccept = logalp_dist(suma,KK,II,star) - logalp_dist(suma,KK,II,tempalp) + log(star) - log(tempalp);
+
+    //Rcout << "alp" << tempalp << "       alpprop: " << star << "       log aceptance prob" << praccept << "\n";
+
     uni = R::runif(0,1);
-    if(praccept >= uni) *alp = star;
+    if(praccept >= log(uni)) *alp = star;
+    
+    
     
     //printf("alp %f \n",*alp);
 }
 
-void sample_latent(int II, int KK, Rcpp::NumericVector &latent, double alp){
-    int i;
-    double x,y;
-    
-    for(i=0; i<II; i++){
-        x = R::rgamma(KK,1.0);
-        y = R::rgamma(alp,1.0);
-        latent[i] = y/(x+y);
-        //printf("x %f y %f latenti %f \n",x,y,latent[i]);
-    }
-    //printf("KK %i alp %i \n",KK,alp);
-    
-}
+
 
 void sample_beta(int II, int JJ,int KK, Rcpp::NumericMatrix &beta, Rcpp::NumericVector &alpha, Rcpp::NumericVector &mu, Rcpp::NumericMatrix &z, double tau2, double rho, Rcpp::IntegerVector &gamma, Rcpp::IntegerMatrix &omega){
     int i,j,k,l;
     double mean,var,sd;
     IntegerVector w(KK);
     double zstar;
-    
     int LL;
-    
-    
-    
     for(i=0; i<II; i++){
         
         for(k=0; k<KK; k++){
@@ -444,7 +439,18 @@ void sample_beta(int II, int JJ,int KK, Rcpp::NumericMatrix &beta, Rcpp::Numeric
     
 }
 
-void sample_alpha(int II,int JJ, int KK, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma,double w2,double pialpha){
+
+void sample_pialpha(int II, Rcpp::NumericVector alpha, double *pialpha){
+    int i;
+    int numzeros = 0;
+    for(i=0; i<II; i++){
+        if(alpha[i]==0) numzeros++;
+    }
+    *pialpha = R::rbeta(1.0 + II - numzeros, 1.0 + numzeros);
+}
+
+
+void sample_alpha(int II,int JJ, int KK, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma,double w2, double pialpha){
     int i,j;
     double var, sd, mean;
     double logscore, pr0;
@@ -457,18 +463,15 @@ void sample_alpha(int II,int JJ, int KK, Rcpp::NumericMatrix &z, Rcpp::NumericVe
         v=0;
         for(i=0; i<II; i++){
             zstar += (z(i, j)-mu[j]) * beta(i, gamma[j]);
-            v += beta(i, gamma[j]) * beta(i, gamma[j]);}
+            v += beta(i, gamma[j]) * beta(i, gamma[j]);
+        }
         var = 1.0/(v+1.0/w2);
         sd = sqrt(var);
         mean = var*zstar;
         logscore = log(pialpha) - log(1.0-pialpha) - 0.5*log(w2) + 0.5*log(var) + 0.5*mean*mean/var;
         pr0 = 1.0/(1.0+exp(logscore));   //prob that alpha = 0
-        /* u = gsl_ran_flat(r,0,1);
-         if(u > pr0) alpha[j] = gsl_ran_gaussian(r,sd) + mean; */
         u = R::runif(0.0,1.0);
-        //pr0 = 0;    //don't use point mass at 0 for now
         if(u > pr0) alpha[j] = R::rnorm(mean,sd);
-        //printf("alpha: %f  \n",alpha[j]);
     }
     
 }

@@ -21,11 +21,11 @@ void sample_omega(int II, int JJ, Rcpp::IntegerMatrix &omega, double alp, Rcpp::
 
 double logalp_dist(double sum, int KK, int II, double alp);
 
-void sample_alp(int II, int KK, Rcpp::NumericVector &latent, Rcpp::IntegerMatrix &omega, double *alp);
-
-void sample_latent(int II, int KK, Rcpp::NumericVector &latent, double alp);
+void sample_alp(int II, int KK, Rcpp::IntegerMatrix &omega, double *alp, double varalpprop);
 
 void sample_beta(int II, int JJ,int KK, Rcpp::NumericMatrix &beta, Rcpp::NumericVector &alpha, Rcpp::NumericVector &mu, Rcpp::NumericMatrix &z, double tau2, double rho, Rcpp::IntegerVector &gamma, Rcpp::IntegerMatrix &omega);
+
+void sample_pialpha(int II, Rcpp::NumericVector alpha, double *pialpha);
 
 void sample_alpha(int II,int JJ, int KK, Rcpp::NumericMatrix &z, Rcpp::NumericVector &mu, Rcpp::NumericVector &alpha, Rcpp::NumericMatrix &beta, Rcpp::IntegerVector &gamma,double w2,double pialpha);
 
