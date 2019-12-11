@@ -8,6 +8,7 @@ compareidealK1D <- function(votes, group, demleader, repleader, nsamples = 30000
 
     #Take the objet votes and create y and missing.  Two different approaches depending on wheters is a roll call object (ord file) or a matrix
     if(is(votes,"rollcall")){
+        print("here")
         y       <- as.matrix(votes$votes)
         missing <- as.matrix(votes$votes)
         II      <- dim(y)[1]
@@ -28,6 +29,7 @@ compareidealK1D <- function(votes, group, demleader, repleader, nsamples = 30000
                 }
             }
         }
+        votes <- y
     }else{
         if(is(votes,"matrix")){
             if(any(!(votes)%in%c(0,1,NA))){
@@ -68,8 +70,7 @@ compareidealK1D <- function(votes, group, demleader, repleader, nsamples = 30000
     if(nsamples <= burn)          stop("nsamples must be greater than burn")
     if(nsamples <= printevery)    stop("nsamples must be greater than printevery")
 
-
-     .Call(`_compareKgroups`, ngroups, votes, missing, demleader, repleader, group, nsamples, burn, thin, printevery,  varalpprop)
+     .Call(`_compareKgroups`, ngroups, y, missing, demleader, repleader, group, nsamples, burn, thin, printevery,  varalpprop)
    
 }
 
